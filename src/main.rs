@@ -1,14 +1,39 @@
 mod reader;
 mod messages;
 
-use std::io;
+use std::{fs::File, io::{self, BufReader}};
 
-use crate::reader::parse_to_readable;
+use crate::reader::next_message;
+use crate::messages::system_event::SystemEvent;
 
 const PATH: &str = "input_data/12302019.NASDAQ_ITCH50";
 
 
+
+fn parse_to_readable() -> io::Result<Vec<SystemEvent>> {
+    let mut reader = BufReader::new(File::open(PATH)?);
+    let mut buf = Vec::new();
+    let mut events = Vec::new();
+
+    while next_message(&mut reader, &mut buf)? {
+        if let Some(ev) = messages::parse(&buf) {
+            events.push(ev);
+        }
+    }
+
+    Ok(events)
+}
+
+
+
+
+
+
+
 fn main() -> io::Result<()>{
+
+
+
     let events = parse_to_readable()?;
 
     for ev in &events {
