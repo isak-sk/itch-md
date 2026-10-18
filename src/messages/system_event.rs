@@ -55,7 +55,6 @@ pub struct SystemEvent {
 
 
 impl SystemEvent {
-
     fn new(stock_locate: u16, tracking_num: u16, timestamp: u64, event_code: SystemEventCodes) -> Self {
         Self {
             stock_locate,
@@ -63,6 +62,18 @@ impl SystemEvent {
             timestamp,
             event_code
         }
+    }
+
+    pub fn format_summary(&self) -> String {
+        let total_sec = self.timestamp / 1_000_000_000;
+        let h = total_sec / 3600;
+        let m = (total_sec % 3600) / 60;
+        let s = total_sec % 60;
+
+        format!(
+            "[SYSTEM] {:02}:{:02}:{:02} | Code: {} (Locate: {}, Track: {})",
+            h, m, s, self.event_code.as_str(), self.stock_locate, self.tracking_num
+        )
     }
 }
 
